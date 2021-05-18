@@ -5,16 +5,14 @@ import 'package:attendant/model/Response.dart';
 import 'package:http/http.dart' as http;
 
 class HttpHandler {
-  Future<Response> compData(var mobile, var name, var gender, var circuit,
+  Future<Response> compData(var driver, var circuit,
       var auto, var bestTime, var laps) async {
     var data = {
-      "mobile": "$mobile",
-      "name": "$name",
-      "gender": "$gender",
+      "driver": "$driver",
       "circuit": "$circuit",
-      "auto": "$auto",
+      "drive_mode": "$auto",
       "best_time": "$bestTime",
-      "laps": "$laps"
+      "lap": "$laps"
     };
 
     // Starting Web API Call.
@@ -41,5 +39,29 @@ class HttpHandler {
     final rData = jsonDecode(response.body);
     print('Login Response: ${response.body}.');
     return Response.fromLoginResponse(rData);
+  }
+
+  Future<Response> addDriver(
+      var username, var gender, var city, var mobile, var email) async {
+    var data = {
+      "mobile": "$mobile",
+      "username": "$username",
+      "gender": "$gender",
+      "email": "$email",
+      "city": "$city"
+    };
+
+    // Starting Web API Call.
+    var response =
+        await http.post(Uri.parse(Constant.createDriver), body: data);
+    // Getting Server response into variable.
+    final rData = jsonDecode(response.body);
+    return Response.fromResponse(rData);
+  }
+
+  Future<Response> fetchDriver() async {
+    var response = await http.get(Uri.parse(Constant.fetchDriversUrl));
+    final data = jsonDecode(response.body);
+    return Response.fromDriverResponse(data);
   }
 }

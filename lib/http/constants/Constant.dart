@@ -1,8 +1,10 @@
 class Constant {
-  static final baseUrl =
-      'https://danvanmandela.000webhostapp.com/games/index.php/';
   static final compUrl =
-      'https://danvanmandela.000webhostapp.com/games/index.php/try/player/data';
+      'https://chayugadesigns.com/rev-system/index.php/game/game/race';
   static final loginUrl =
-      'https://danvanmandela.000webhostapp.com/games/index.php/admin/user/login';
+      'https://chayugadesigns.com/rev-system/index.php/game/user/login';
+  static final fetchDriversUrl =
+      'https://chayugadesigns.com/rev-system/index.php/game/user/driver/fetch';
+  static final createDriver =
+      'https://chayugadesigns.com/rev-system/index.php/game/user/driver/create';
 }

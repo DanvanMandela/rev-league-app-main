@@ -1,9 +1,13 @@
+import 'dart:convert';
+
+import 'package:attendant/http/constants/Constant.dart';
 import 'package:attendant/http/response/response.dart';
 import 'package:attendant/model/Response.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_formfield/dropdown_formfield.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:toast/toast.dart';
+import 'package:http/http.dart' as http;
 
 enum Gender { MALE, FEMALE, OTHER }
 enum Online { YES, NO }
@@ -46,6 +50,21 @@ class _RacingState extends State<Racing> implements HttpCallBack {
   // declare dropdown activity......................
   String _myActivity;
   String _myActivityResult;
+  String _driver;
+
+  final String url = Constant.fetchDriversUrl;
+  List data = List();
+
+  Future<String> getDriversData() async {
+    var response = await http.get(Uri.parse(Constant.fetchDriversUrl),
+        headers: {"Accept": "application/json"});
+    var resBody = json.decode(response.body);
+    setState(() {
+      data = resBody;
+    });
+    print(resBody);
+    return "Sucess";
+  }
 
   String name;
   String mobile;
@@ -86,6 +105,12 @@ class _RacingState extends State<Racing> implements HttpCallBack {
     _response = new HttpResponse(this);
   }
 
+  @override
+  void initState() {
+    super.initState();
+    this.getDriversData();
+  }
+
   //on login button clicked calls this
   void _submit() {
     final form = _formKey.currentState;
@@ -93,8 +118,7 @@ class _RacingState extends State<Racing> implements HttpCallBack {
       pr.show();
       setState(() {
         form.save();
-        _response.doComp(
-            _mobile.text, _name.text, gender, _myActivity, auto, bestTime, laps);
+        _response.doComp(_driver, _myActivity, auto, bestTime, laps);
       });
     }
   }
@@ -215,69 +239,23 @@ class _RacingState extends State<Racing> implements HttpCallBack {
                               SizedBox(
                                 height: 15,
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 5, 10, 10),
-                                child: TextFormField(
-                                  obscureText: false,
-                                  keyboardType: TextInputType.text,
-                                  onSaved: (val) => name = val,
-                                  controller: _name,
-                                  decoration: new InputDecoration(
-                                    labelText: "Driver's Name",
-                                    fillColor: Colors.white,
-
-                                    border: new OutlineInputBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(5.0),
-                                      borderSide: new BorderSide(),
-                                    ),
-                                    //fillColor: Colors.green
-                                  ),
-                                  validator: (val) {
-                                    if (val.length == 0) {
-                                      return "Name cannot be empty";
-                                    } else {
-                                      return null;
-                                    }
+                              Card(
+                                child: DropdownButton(
+                                  items: data.map((item) {
+                                    return new DropdownMenuItem(
+                                      child: new Text(item['username']),
+                                      value: item['id'].toString(),
+                                    );
+                                  }).toList(),
+                                  onChanged: (newVal) {
+                                    setState(() {
+                                      _driver = newVal;
+                                    });
                                   },
-                                  style: new TextStyle(
-                                    fontFamily: "Poppins",
-                                  ),
+                                  value: _driver,
                                 ),
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 5, 10, 10),
-                                child: TextFormField(
-                                  obscureText: false,
-                                  keyboardType: TextInputType.phone,
-                                  onSaved: (val) => mobile = val,
-                                  controller: _mobile,
-                                  decoration: new InputDecoration(
-                                    labelText: "Driver's Mobile",
-                                    fillColor: Colors.white,
-                                    border: new OutlineInputBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(5.0),
-                                      borderSide: new BorderSide(),
-                                    ),
-                                    //fillColor: Colors.green
-                                  ),
-                                  validator: (val) {
-                                    if (val.length == 0) {
-                                      return "Name cannot be empty";
-                                    } else {
-                                      return null;
-                                    }
-                                  },
-                                  style: new TextStyle(
-                                    fontFamily: "Poppins",
-                                  ),
-                                ),
+                                elevation: 3,
+                                color: Color.fromRGBO(255, 255, 255, 0.2),
                               ),
                             ],
                           ),

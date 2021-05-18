@@ -6,6 +6,8 @@ import 'package:attendant/logins/resetPassword.dart';
 import 'package:attendant/screens/racing.dart';
 import 'package:flutter/material.dart';
 
+import 'logins/loadingScreen.dart';
+
 void main() {
   runApp(MyApp());
 }

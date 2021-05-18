@@ -15,10 +15,10 @@ class HttpResponse {
 
   HttpResponse(this._callBack);
 
-  doComp(var mobile, var name, var gender, var circuit, var auto, var besTime,
+  doComp(var driver, var circuit, var auto, var besTime,
       var laps) {
     request
-        .setComp(mobile, name, gender, circuit, auto, besTime, laps)
+        .setComp(driver, circuit, auto, besTime, laps)
         .then((comp) => _callBack.onSuccess(comp))
         .catchError((onError) => _callBack.onError(onError.toString()));
   }
@@ -27,6 +27,20 @@ class HttpResponse {
     request
         .getUserLogin(email, password)
         .then((login) => _callBack.onSuccess(login))
+        .catchError((onError) => _callBack.onError(onError.toString()));
+  }
+
+  doDriver(var username, var gender, var city, var mobile, var email) {
+    request
+        .addDriver(username, gender, city, mobile, email)
+        .then((driver) => _callBack.onError(driver))
+        .catchError((onError) => _callBack.onError(onError.toString()));
+  }
+
+  doFetchDriver() {
+    request
+        .fetchDriver()
+        .then((value) => _callBack.onSuccess(value))
         .catchError((onError) => _callBack.onError(onError.toString()));
   }
 }
